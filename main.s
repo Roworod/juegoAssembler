@@ -15,38 +15,68 @@ main:
 	ldr r1,=pixelAddr
 	str r0,[r1]
 
-	@@pintando la linea del suelo
-	start:
-		ldr r1,=mover
-		ldr r1,[r1]
-		cmp r1,#200
-		bgt character
-		ldr r0,=pixelAddr
-		ldr r0,[r0]
-		ldr r1,=mover
-		ldr r1,[r1]
-		mov r2,#400
-		mov r3,#7
 
-		bl pixel
-		ldr r0,=mover
-		ldr r0,[r0]
-		add r0,#1
-		ldr r1,=mover
-		str r0,[r1]
-		b fila
+infiniteLoop:
+@@--------------------------------------------
+@@aqui se imprime el fondo
+@@--------------------------------------------
+/*
+		mov r0,#0
+		ldr r1,=fondoM
+		ldr r2,=fondoMWidth
+		ldr r2,[r2]
+		ldr r3,=fondoMHeight
+		ldr r3,[r3]
 
+		bl imprimirImagen*/
+
+
+@@---------------------------------------------
+@@aqui se decide la posicion en y del personaje
+@@---------------------------------------------
+		MOV R7,#3
+		MOV R0,#0
+		MOV R2,#1
+		LDR R1,=usuario
+		SWI 0
+
+		ldr r1,=usuario
+		ldr r1,[r1]
+		mov r0,#99
+		cmp r1,#119
+		moveq r0,#1
+		cmp r1,#115
+		moveq r0,#0
+		bl movimiento
+
+@@-----------------------------------------------
+@@delay
+@@-----------------------------------------------
+		mov r5,#0x4000000
+		wait:
+		 	mov r0, #0x4000000 @ big number
+			sleepLoop:
+		 	subs r0,#1
+		 	bne sleepLoop @ loop delay
+			sub r5,#1
+			cmp r5,#0
+			bgt wait
+
+@@---------------------------------------------
+@@aqui se imprime el personaje
+@@--------------------------------------------		
 	character:
 	@@comienzo de impresion imagen 1
-	ldr r0,=salto
+	ldr r0,=posCharacterY
 	ldr r0,[r0]
-	ldr r1,=lttp1M
-	ldr r2,=lttp1MWidth
+	ldr r1,=run1
+	ldr r2,=run1Width
 	ldr r2,[r2]
-	ldr r3,=lttp1MHeight
+	ldr r3,=run1Height
 	ldr r3,[r3]
 
 	bl imprimirImagen	
+
 
 	close:
 		mov r7,#1
@@ -59,13 +89,12 @@ main:
 .global posY
 .global tempSizeY
 .global tempSizeX
-.global bienvenida
+.global posCharacterY
 pixelAddr: .word 0
-bienvenida: .asciz "Bienvenido nuevo usuario"
-posX: .word 30
+posX: .word 0
 posY: .word 200
 tempSizeX: .word 0
 tempSizeY: .word 0
-mover: .word 0
-salto: .word 200
+posCharacterY: .word 400
+usuario: .asciz " "
 .end

@@ -21,7 +21,7 @@ imprimirImagen:
 	 ldr r8,=posY
 	 str r0,[r8]
 
-	 mov r4,r1
+	 push {r1}
 	 mov r9,r2
 
 	 recorrerFila:
@@ -30,7 +30,7 @@ imprimirImagen:
 	 	ldr sizeX,[sizeX]
 	 	sub sizeX,#1
 	 	cmp sizeX,#0
-	 	beq nextCol
+	 	blt nextCol
 
 	 	ldr r0,=tempSizeX
 	 	str sizeX,[r0]
@@ -42,7 +42,9 @@ imprimirImagen:
 	 	ldr r1,[r1]
 	 	ldr r2,=posY
 	 	ldr r2,[r2]
+	 	pop {r4}
 	 	ldrb r3,[r4],#4
+	 	push {r4}
 	 	bl pixel
 
 	 	@@moviendonos 1 en x
@@ -59,14 +61,14 @@ imprimirImagen:
 	 	ldr sizeY,[sizeY]
 	 	sub sizeY,#1
 	 	cmp sizeY,#0
-	 	beq fin
+	 	blt fin
 
 	 	ldr r0,=tempSizeY
 	 	str sizeY,[r0]
 
 	 	@@regresando en X
 	 	ldr r0,=posX
-	 	mov r1,#30
+	 	mov r1,#0
 	 	str r1,[r0]
 
 	 	@@denuevo el contador en x=inicial
