@@ -30,25 +30,6 @@ infiniteLoopTotal:
 		bl imprimirImagen
 
 
-leerUsuario:
-@@---------------------------------------------
-@@aqui se decide la posicion en y del personaje
-@@---------------------------------------------
-		MOV R7,#3
-		MOV R0,#0
-		MOV R2,#1
-		LDR R1,=usuario
-		SWI 0
-
-		ldr r1,=usuario
-		ldr r1,[r1]
-		mov r0,#99
-		cmp r1,#119
-		moveq r0,#1
-		cmp r1,#115
-		moveq r0,#0
-		bl movimiento
-
 @@-----------------------------------------------
 @@delay
 @@-----------------------------------------------
@@ -84,6 +65,31 @@ leerUsuario:
 	str r0,[r1]
 
 	b leerUsuario
+
+
+
+leerUsuario:
+@@---------------------------------------------
+@@aqui se decide la posicion en y del personaje
+@@---------------------------------------------
+		MOV R7,#3
+		MOV R0,#0
+		MOV R2,#1
+		LDR R1,=usuario
+		SWI 0
+
+		ldr r1,=usuario
+		ldr r1,[r1]
+		mov r0,#99
+		cmp r1,#119
+		moveq r0,#1
+		cmp r1,#119
+		moveq r0,#0
+		cmp r1,#115
+		moveq r1,0
+		bl movimiento
+
+	b infiniteLoopTotal
 
 	mov r7,#1
 	swi 0

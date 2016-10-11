@@ -11,6 +11,7 @@ imprimirImagen:
 	push {lr}
 	sizeX .req r10
 	sizeY .req r11
+	fondo .req r7
 
 	 @@guardando los tamanos
 	 ldr r8,=tempSizeX
@@ -24,6 +25,12 @@ imprimirImagen:
 
 	 push {r1}
 	 mov r9,r2
+
+	pop {r4}
+	mov r7,r4
+	ldr r7,[r7]
+	push {r4}
+
 
 	 recorrerFila:
 	 	@@ya terminamos una fila??
@@ -46,8 +53,12 @@ imprimirImagen:
 	 	pop {r4}
 	 	ldrb r3,[r4],#4
 	 	push {r4}
+
+	 	cmp r3,r7
+	 	beq omitiendoFondo
 	 	bl pixel
 
+	 	omitiendoFondo:
 	 	@@moviendonos 1 en x
 	 	ldr r0,=posX
 	 	ldr r0,[r0]
