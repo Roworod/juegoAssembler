@@ -19,7 +19,7 @@ movimientoX:
 	ldr r0,[r0]
 	add r0,#10
 	ldr r1,= posArrowX
-	str r0,r1
+	str r0,[r1]
 
 	mov pc,lr
 

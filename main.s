@@ -48,9 +48,6 @@ infiniteLoopTotal:
 @@--------------------------------------------		
 	character:
 	@@comienzo de impresion imagen 1
-	ldr r0,=posX
-	ldr r0,[r0]
-	push {r0}
 	ldr r0,=posCharacterY
 	ldr r0,[r0]
 	ldr r1,=run1
@@ -58,6 +55,7 @@ infiniteLoopTotal:
 	ldr r2,[r2]
 	ldr r3,=run1Height
 	ldr r3,[r3]
+	mov r4,#0
 
 	bl imprimirImagen
 
@@ -84,11 +82,11 @@ leerUsuario:
 		ldr r1,=usuario
 		ldr r1,[r1]
 		mov r0,#99
-		cmp r1,"w"
+		cmp r1,#119
 		moveq r0,#1
-		cmp r1,"s"
+		cmp r1,#115
 		moveq r0,#0
-		cmp r1,"v"
+		cmp r1,#118
 		moveq r1,#2
 		cmp r1,#2
 		blne movimiento
@@ -101,9 +99,6 @@ disparo:
 @@------------------------------------------------
 	bl movimientoX
 
-	ldr r0,=posX
-	ldr r0,[r0]
-	push {r0}
 	ldr r0,=posArrowY
 	ldr r0,[r0]
 	ldr r1,=arrowM
@@ -111,7 +106,10 @@ disparo:
 	ldr r2,[r2]
 	ldr r3,=arrowMHeight
 	ldr r3,[r3]
-	bl movimiento
+	ldr r4,=posArrowX
+	ldr r4,[r4]
+
+	bl imprimirImagen
 
 	b infiniteLoopTotal
 

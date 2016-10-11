@@ -6,7 +6,7 @@
 @@	 	 r1=matriz de colores
 @@		 r2=tamano X
 @@		 r3=tamano y
-@@ 		stack recibe poscionXinicial
+@@ 		 r4=posXinicial
 
 imprimirImagen:
 	push {lr}
@@ -25,8 +25,7 @@ imprimirImagen:
 	 str r0,[r8]
 
 	 ldr r8,=posX
-	 pop {r0}
-	 str r0,[r8]
+	 str r4,[r8]
 
 	 push {r1}
 	 mov r9,r2
