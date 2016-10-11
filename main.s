@@ -15,12 +15,11 @@ main:
 	ldr r1,=pixelAddr
 	str r0,[r1]
 
-
-infiniteLoop:
+infiniteLoopTotal:
 @@--------------------------------------------
 @@aqui se imprime el fondo
 @@--------------------------------------------
-/*
+
 		mov r0,#0
 		ldr r1,=fondoM
 		ldr r2,=fondoMWidth
@@ -28,9 +27,10 @@ infiniteLoop:
 		ldr r3,=fondoMHeight
 		ldr r3,[r3]
 
-		bl imprimirImagen*/
+		bl imprimirImagen
 
 
+leerUsuario:
 @@---------------------------------------------
 @@aqui se decide la posicion en y del personaje
 @@---------------------------------------------
@@ -52,7 +52,7 @@ infiniteLoop:
 @@-----------------------------------------------
 @@delay
 @@-----------------------------------------------
-		mov r5,#0x4000000
+		/*mov r5,#0x4000000
 		wait:
 		 	mov r0, #0x4000000 @ big number
 			sleepLoop:
@@ -60,7 +60,7 @@ infiniteLoop:
 		 	bne sleepLoop @ loop delay
 			sub r5,#1
 			cmp r5,#0
-			bgt wait
+			bgt wait*/
 
 @@---------------------------------------------
 @@aqui se imprime el personaje
@@ -75,12 +75,19 @@ infiniteLoop:
 	ldr r3,=run1Height
 	ldr r3,[r3]
 
-	bl imprimirImagen	
+	bl imprimirImagen
 
+	ldr r0,=posCharacterY
+	ldr r0,[r0]
+	add r0,#1
+	ldr r1,=posCharacterY
+	str r0,[r1]
 
-	close:
-		mov r7,#1
-		swi 0
+	b leerUsuario
+
+	mov r7,#1
+	swi 0
+
 
 .data
 .balign 4
@@ -90,11 +97,13 @@ infiniteLoop:
 .global tempSizeY
 .global tempSizeX
 .global posCharacterY
+.global bienvenida
 pixelAddr: .word 0
 posX: .word 0
 posY: .word 200
 tempSizeX: .word 0
 tempSizeY: .word 0
-posCharacterY: .word 400
+posCharacterY: .word 200
 usuario: .asciz " "
+bienvenida: .asciz "bienvenida"
 .end

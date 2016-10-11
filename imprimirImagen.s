@@ -8,6 +8,7 @@
 @@		 r3=tamano y
 
 imprimirImagen:
+	push {lr}
 	sizeX .req r10
 	sizeY .req r11
 
@@ -61,7 +62,7 @@ imprimirImagen:
 	 	ldr sizeY,[sizeY]
 	 	sub sizeY,#1
 	 	cmp sizeY,#0
-	 	blt fin
+	 	beq fin
 
 	 	ldr r0,=tempSizeY
 	 	str sizeY,[r0]
@@ -84,4 +85,5 @@ imprimirImagen:
 	 	b recorrerFila
 
 	 fin:
-	 	mov pc,lr
+	 	pop {r9}
+	 	pop {pc}
