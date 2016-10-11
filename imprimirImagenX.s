@@ -1,14 +1,13 @@
 .text
-.global imprimirImagen
+.global imprimirImagenX
 
 @@subrutina que imprime una imagen 
-@@param: r0=posicionYInicial
+@@param: r0=posicionXInicial
 @@	 	 r1=matriz de colores
 @@		 r2=tamano X
 @@		 r3=tamano y
-@@ 		stack recibe poscionXinicial
 
-imprimirImagen:
+imprimirImagenX:
 	push {lr}
 	sizeX .req r10
 	sizeY .req r11
@@ -24,10 +23,6 @@ imprimirImagen:
 	 ldr r8,=posY
 	 str r0,[r8]
 
-	 ldr r8,=posX
-	 pop {r0}
-	 str r0,[r8]
-
 	 push {r1}
 	 mov r9,r2
 
@@ -37,7 +32,7 @@ imprimirImagen:
 	push {r4}
 
 
-	 recorrerFila:
+	 recorrerFilaX:
 	 	@@ya terminamos una fila??
 	 	ldr sizeX,=tempSizeX
 	 	ldr sizeX,[sizeX]
@@ -72,7 +67,7 @@ imprimirImagen:
 	 	str r0,[r1]
 	 	b recorrerFila
 
-	 nextCol:
+	 nextColX:
 	 	@@terminamos las columnas???
 	 	ldr sizeY,=tempSizeY
 	 	ldr sizeY,[sizeY]
@@ -100,6 +95,6 @@ imprimirImagen:
 	 	str r0,[r1]
 	 	b recorrerFila
 
-	 fin:
+	 finX:
 	 	pop {r9}
 	 	pop {pc}

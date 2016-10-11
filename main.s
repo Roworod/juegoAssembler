@@ -48,6 +48,9 @@ infiniteLoopTotal:
 @@--------------------------------------------		
 	character:
 	@@comienzo de impresion imagen 1
+	ldr r0,=posX
+	ldr r0,[r0]
+	push {r0}
 	ldr r0,=posCharacterY
 	ldr r0,[r0]
 	ldr r1,=run1
@@ -81,13 +84,34 @@ leerUsuario:
 		ldr r1,=usuario
 		ldr r1,[r1]
 		mov r0,#99
-		cmp r1,#119
+		cmp r1,"w"
 		moveq r0,#1
-		cmp r1,#119
+		cmp r1,"s"
 		moveq r0,#0
-		cmp r1,#115
-		moveq r1,0
-		bl movimiento
+		cmp r1,"v"
+		moveq r1,#2
+		cmp r1,#2
+		blne movimiento
+		bne infiniteLoopTotal
+		beq disparo
+
+disparo:
+@@------------------------------------------------
+@@si hubo un disparo
+@@------------------------------------------------
+	bl movimientoX
+
+	ldr r0,=posX
+	ldr r0,[r0]
+	push {r0}
+	ldr r0,=posArrowY
+	ldr r0,[r0]
+	ldr r1,=arrowM
+	ldr r2,=arrowMWidth
+	ldr r2,[r2]
+	ldr r3,=arrowMHeight
+	ldr r3,[r3]
+	bl movimiento
 
 	b infiniteLoopTotal
 
@@ -103,7 +127,8 @@ leerUsuario:
 .global tempSizeY
 .global tempSizeX
 .global posCharacterY
-.global bienvenida
+.global posArrowX
+.global posArrowY
 pixelAddr: .word 0
 posX: .word 0
 posY: .word 200
@@ -111,5 +136,6 @@ tempSizeX: .word 0
 tempSizeY: .word 0
 posCharacterY: .word 200
 usuario: .asciz " "
-bienvenida: .asciz "bienvenida"
+posArrowY: .word 0
+posArrowX: .word 0
 .end
