@@ -40,6 +40,11 @@ main:
 
 
 	loop:
+		ldr r0,=booleanEndGame
+		ldr r0,[r0]
+		cmp r0,#1
+		beq endGame
+
 	/*IMPRIMIENDO IMAGENES DE FONDO SI NO SE HA HECHO NADA AUN*/
 		ldr r0, =prueba
 		bl puts
@@ -47,14 +52,14 @@ main:
 		/*background*/
 		bl background
 
-		bl Enemigo
+		/*Villano*/
+		bl enemigo
 
 		/*si la flecha esta en movimiento*/
 		ldr r0,=disparoFlechaBoolean
 		ldr r0,[r0]
 		cmp r0,#0
 		beq continue
-
 		bl flecha
 
 		continue:
@@ -156,7 +161,14 @@ main:
 			bl puts
 			b loop
 
+
+
 	b loop
+
+	endGame:
+
+		mov r7,#1
+		swi 0
 
 
 /*******************SUBRUTINAS******************/
@@ -328,56 +340,122 @@ personaje:
 @@Parametros
 flecha:
 	push {lr}
-	ldr r0,=posArrowY
-	ldr r0,[r0]
-	ldr r1,=arrowM
-	ldr r2,=arrowMWidth
-	ldr r2,[r2]
-	ldr r3,=arrowMHeight
-	ldr r3,[r3]
-	ldr r4,=posArrowX
-	ldr r4,[r4]
 
-	bl imprimirImagen
+		ldr r0,=posArrowY
+		ldr r0,[r0]
+		ldr r1,=arrowM
+		ldr r2,=arrowMWidth
+		ldr r2,[r2]
+		ldr r3,=arrowMHeight
+		ldr r3,[r3]
+		ldr r4,=posArrowX
+		ldr r4,[r4]
 
-	ldr r1,=posArrowX
-	ldr r1,[r1]
-	add r1,#20
-	ldr r0,=posArrowX
-	str r1,[r0]
+		bl imprimirImagen
 
-	ldr r0,=topePantallaX
-	ldr r0,[r0]
-	cmp r1,r0
-	blt finFlecha
+		ldr r1,=posArrowX
+		ldr r1,[r1]
+		add r1,#40
+		ldr r0,=posArrowX
+		str r1,[r0]
 
-	ldr r0,=disparoFlechaBoolean
-	mov r1,#0
-	str r1,[r0]
-	ldr r0,=posArrowX
-	mov r1,#30
-	str r1,[r0]
+		ldr r0,=topePantallaX
+		ldr r0,[r0]
+		cmp r1,r0
+		blt finFlecha
 
-	finFlecha:
-	pop {pc}
+		ldr r0,=disparoFlechaBoolean
+		mov r1,#0
+		str r1,[r0]
+		ldr r0,=posArrowX
+		mov r1,#30
+		str r1,[r0]
+		bl terminoElJuego
+
+		finFlecha:
+		pop {pc}
 
 /*Imprimiendo el enemigo Ganondorf*/
-@@impresion del enemigo
-Enemigo:
-	push {lr}
-	ldr r0,=posYGanondorf
-	ldr r0,[r0]
-	ldr r1,=ganondorfM
-	ldr r2,=width
-	ldr r2,[r2]
-	ldr r3,=height
-	ldr r3,[r3]
-	ldr r4,=posXGanondorf
-	ldr r4,[r4]
+		@@impresion del enemigo
+		enemigo:
+		push {lr}
 
-	bl imprimirImagen
+		ldr r0,=caminataGanodorfBoolean
+		ldr r0,[r0]
+		cmp r0,#0
+		beq ganondorfBaja
+		cmp r0,#1
+		beq ganondorfSube
 
+		ganondorfBaja:
+			ldr r0,=posYGanondorf
+			ldr r0,[r0]
+			add r0,#10
+			ldr r1,=posYGanondorf
+			str r0,[r1]
+			ldr r1,=topeGanondorf
+			ldr r1,[r1]
+			ldr r2,=caminataGanodorfBoolean
+			mov r3,#1
+			cmp r0,r1
+			strgt r3,[r2]
+			b finGanondorf
+
+		ganondorfSube:
+			ldr r0,=posYGanondorf
+			ldr r0,[r0]
+			sub r0,#10
+			ldr r1,=posYGanondorf
+			str r0,[r1]
+			ldr r1,=topeGanondorf
+			ldr r1,[r1]
+			ldr r2,=caminataGanodorfBoolean
+			mov r3,#0
+			cmp r0,#20
+			strlt r3,[r2]
+			b finGanondorf
+
+		finGanondorf:
+			ldr r1,=ganondorfM
+			ldr r2,=width
+			ldr r2,[r2]
+			ldr r3,=height
+			ldr r3,[r3]
+			ldr r4,=posXGanondorf
+			ldr r4,[r4]
+			bl imprimirImagen
 	pop {pc}
+
+@@viendo si el juego ya termino
+terminoElJuego:
+	push {lr}
+	ganondorfInicio .req r0
+	ganondorfFinal .req r1
+	posicionFlecha .req r2
+	
+	ldr r5,=booleanEndGame
+	mov r6,#1
+	
+	ldr ganondorfInicio,=posYGanondorf
+	ldr ganondorfInicio,[ganondorfInicio]
+	add ganondorfFinal,ganondorfInicio,#68
+
+	ldr posicionFlecha,=posArrowY
+	ldr posicionFlecha,[posicionFlecha]
+
+	cmp posicionFlecha,ganondorfInicio
+	blt finComprobacion
+	cmp posicionFlecha,ganondorfFinal
+	bgt finComprobacion
+
+	str r6,[r5]
+
+	finComprobacion:
+		.unreq ganondorfInicio
+		.unreq ganondorfFinal
+		.unreq posicionFlecha
+		pop {pc}
+
 
 @@--------------------------------------------------------------
 .data
@@ -410,6 +488,7 @@ posY: .word 200
 posXlink: .word 0
 posYlink: .word 140
 
+
 tempSizeX: .word 0
 tempSizeY: .word 0
 posCharacterY: .word 200
@@ -420,7 +499,10 @@ topePantalla: .word 390
 prueba: .asciz "PRUEBA \n"
 prueba2: .asciz "PRUEBA wait \n"
 disparoFlechaBoolean: .word 0
-posYGanondorf: .word 150
+posYGanondorf: .word 10
 posXGanondorf: .word 595
 topePantallaX: .word 550
+topeGanondorf: .word 400
+caminataGanodorfBoolean: .word 0
+booleanEndGame: .word 0
 .end
