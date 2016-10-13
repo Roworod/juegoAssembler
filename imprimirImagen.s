@@ -6,17 +6,20 @@
 @@	 	 r1=matriz de colores
 @@		 r2=tamano X
 @@		 r3=tamano y
-@@ 		 r4=posXinicial
+@@ 		 r4= posicionXInicial
 
 imprimirImagen:
 	push {lr}
 	sizeX .req r10
 	sizeY .req r11
 	fondo .req r7
+	temporalX .req r6
 
 	 @@guardando los tamanos
 	 ldr r8,=tempSizeX
 	 str r2,[r8]
+
+	 mov temporalX,r4
 
 	 ldr r8,=tempSizeY
 	 str r3,[r8]
@@ -84,7 +87,7 @@ imprimirImagen:
 
 	 	@@regresando en X
 	 	ldr r0,=posX
-	 	mov r1,#0
+	 	mov r1,temporalX
 	 	str r1,[r0]
 
 	 	@@denuevo el contador en x=inicial

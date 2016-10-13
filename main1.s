@@ -39,8 +39,6 @@ main:
 	bl SetGpioFunction
 
 
-
-
 	loop:
 	/*IMPRIMIENDO IMAGENES DE FONDO SI NO SE HA HECHO NADA AUN*/
 		ldr r0, =prueba
@@ -49,6 +47,17 @@ main:
 		/*background*/
 		bl background
 
+		bl Enemigo
+
+		/*si la flecha esta en movimiento*/
+		ldr r0,=disparoFlechaBoolean
+		ldr r0,[r0]
+		cmp r0,#0
+		beq continue
+
+		bl flecha
+
+		continue:
 		/*Personaje*/
 		mov r0,#0
 		bl personaje @lo mantiene en la posicion actual
@@ -110,6 +119,13 @@ main:
 						presionadoAmarillo:
 						ldr r0,=mensajePresionadoAmarillo
 						bl puts
+						ldr r0,=disparoFlechaBoolean
+						mov r1,#1
+						str r1,[r0]
+						ldr r1,=posYlink
+						ldr r1,[r1]
+						ldr r0,=posArrowY
+						str r1,[r0]
 						b loop
 
 					presionadoRojo:
@@ -182,7 +198,9 @@ background:
 		mov r4, #0
 		bl imprimirImagen
 	pop {pc}
-/*Imprimir la imagen con su respectivo movieminto en x o y*/
+
+
+/*Imprimir la imagen del personaje con su respectivo movieminto en x o y*/
 @@PARAMETROS
 @@R0= 1(en realidad puede ser otro) / 0... 1 para saber si se movio el personaje durante el ciclo, 0 para dejarlo en la misma posicion
 @@R1= 1(en realidad puede ser otro) / 0... 1 si hubo moviemiento en Y, 0 no hubo movimiento en Y por lo tanto fue en X
@@ -250,6 +268,11 @@ personaje:
 					ldr r5,=posYlink
 					ldr r5,[r5] @R5 tiene la pos actuar de link en Y
 					add r5, r5, #20
+					@@ya topo
+					ldr r1,=topePantalla
+					ldr r1,[r1]
+					cmp r5,r1
+					bgt siga
 					mov r0, r5
 					ldr r7,=posYlink
 					str r5,[r7]
@@ -268,6 +291,8 @@ personaje:
 					ldr r5,=posYlink
 					ldr r5,[r5] @R5 tiene la pos actuar de link en Y
 					sub r5, r5, #20
+					cmp r5,#1
+					blt siga
 					mov r0, r5
 					ldr r7,=posYlink
 					str r5,[r7]
@@ -298,6 +323,63 @@ personaje:
 		b siga
 	siga:
 	pop {pc}
+
+/*Imprimir la imagen de la flecha con su respectivo movieminto en x o y*/
+@@Parametros
+flecha:
+	push {lr}
+	ldr r0,=posArrowY
+	ldr r0,[r0]
+	ldr r1,=arrowM
+	ldr r2,=arrowMWidth
+	ldr r2,[r2]
+	ldr r3,=arrowMHeight
+	ldr r3,[r3]
+	ldr r4,=posArrowX
+	ldr r4,[r4]
+
+	bl imprimirImagen
+
+	ldr r1,=posArrowX
+	ldr r1,[r1]
+	add r1,#20
+	ldr r0,=posArrowX
+	str r1,[r0]
+
+	ldr r0,=topePantallaX
+	ldr r0,[r0]
+	cmp r1,r0
+	blt finFlecha
+
+	ldr r0,=disparoFlechaBoolean
+	mov r1,#0
+	str r1,[r0]
+	ldr r0,=posArrowX
+	mov r1,#30
+	str r1,[r0]
+
+	finFlecha:
+	pop {pc}
+
+/*Imprimiendo el enemigo Ganondorf*/
+@@impresion del enemigo
+Enemigo:
+	push {lr}
+	ldr r0,=posYGanondorf
+	ldr r0,[r0]
+	ldr r1,=ganondorfM
+	ldr r2,=width
+	ldr r2,[r2]
+	ldr r3,=height
+	ldr r3,[r3]
+	ldr r4,=posXGanondorf
+	ldr r4,[r4]
+
+	bl imprimirImagen
+
+	pop {pc}
+
+@@--------------------------------------------------------------
 .data
 .align 2
 .global pixelAddr
@@ -309,6 +391,8 @@ personaje:
 .global posArrowX
 .global posArrowY
 .global myloc
+.global posXGanondorf
+.global posYGanondorf
 mensajePresionadoStart: .asciz "Boton start esta siendo presionado... \n"
 mensajePresionadoAzul: .asciz "Boton Azul esta siendo presionado... \n"
 mensajePresionadoVerde: .asciz "Boton Verde esta siendo presionado... \n"
@@ -332,6 +416,11 @@ posCharacterY: .word 200
 usuario: .asciz " "
 posArrowY: .word 0
 posArrowX: .word 0
+topePantalla: .word 390
 prueba: .asciz "PRUEBA \n"
 prueba2: .asciz "PRUEBA wait \n"
+disparoFlechaBoolean: .word 0
+posYGanondorf: .word 150
+posXGanondorf: .word 595
+topePantallaX: .word 550
 .end
