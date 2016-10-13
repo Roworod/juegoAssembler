@@ -26,22 +26,10 @@ infiniteLoopTotal:
 		ldr r2,[r2]
 		ldr r3,=fondoMHeight
 		ldr r3,[r3]
+		mov r4,#0
+		push {r4}
 
 		bl imprimirImagen
-
-
-@@-----------------------------------------------
-@@delay
-@@-----------------------------------------------
-		/*mov r5,#0x4000000
-		wait:
-		 	mov r0, #0x4000000 @ big number
-			sleepLoop:
-		 	subs r0,#1
-		 	bne sleepLoop @ loop delay
-			sub r5,#1
-			cmp r5,#0
-			bgt wait*/
 
 @@---------------------------------------------
 @@aqui se imprime el personaje
@@ -56,18 +44,38 @@ infiniteLoopTotal:
 	ldr r3,=run1Height
 	ldr r3,[r3]
 	mov r4,#0
+	push {r4}
 
 	bl imprimirImagen
 
-	ldr r0,=posCharacterY
+	/*ldr r0,=posCharacterY
 	ldr r0,[r0]
 	add r0,#1
 	ldr r1,=posCharacterY
+	str r0,[r1]*/
+
+disparo:
+@@------------------------------------------------
+@@si hubo un disparo
+@@------------------------------------------------
+	ldr r0,=posArrowY
+	ldr r0,[r0]
+	ldr r1,=arrowM
+	ldr r2,=arrowMWidth
+	ldr r2,[r2]
+	ldr r3,=arrowMHeight
+	ldr r3,[r3]
+	ldr r4,=posArrowX
+	ldr r4,[r4]
+
+	push {r4}
+
+	bl imprimirImagen
+	ldr r0,=posArrowX
+	ldr r0,[r0]
+	add r0,#35
+	ldr r1,=posArrowX
 	str r0,[r1]
-
-	b leerUsuario
-
-
 
 leerUsuario:
 @@---------------------------------------------
@@ -84,35 +92,14 @@ leerUsuario:
 		mov r0,#99
 		cmp r1,#119
 		moveq r0,#1
-		cmp r1,#115
-		moveq r0,#0
 		cmp r1,#118
-		moveq r1,#2
+		moveq r1,#0
 		cmp r1,#2
-		blne movimiento
-		bne infiniteLoopTotal
-		beq disparo
+		bl movimiento
 
-disparo:
-@@------------------------------------------------
-@@si hubo un disparo
-@@------------------------------------------------
-	bl movimientoX
 
-	ldr r0,=posArrowY
-	ldr r0,[r0]
-	ldr r1,=arrowM
-	ldr r2,=arrowMWidth
-	ldr r2,[r2]
-	ldr r3,=arrowMHeight
-	ldr r3,[r3]
-	ldr r4,=posArrowX
-	ldr r4,[r4]
-
-	bl imprimirImagen
 
 	b infiniteLoopTotal
-
 	mov r7,#1
 	swi 0
 
@@ -127,6 +114,8 @@ disparo:
 .global posCharacterY
 .global posArrowX
 .global posArrowY
+.global bienvenida
+.global topePantalla
 pixelAddr: .word 0
 posX: .word 0
 posY: .word 200
@@ -136,4 +125,7 @@ posCharacterY: .word 200
 usuario: .asciz " "
 posArrowY: .word 0
 posArrowX: .word 0
+bienvenida: .asciz "bienvenido"
+topeFlecha: .word 390
+topePantalla: .word 679
 .end

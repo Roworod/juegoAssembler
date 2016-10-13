@@ -6,7 +6,7 @@
 @@	 	 r1=matriz de colores
 @@		 r2=tamano X
 @@		 r3=tamano y
-@@ 		 r4=posXinicial
+@@ 		 en la pila la posicion en X inicial
 
 imprimirImagen:
 	push {lr}
@@ -24,17 +24,20 @@ imprimirImagen:
 	 ldr r8,=posY
 	 str r0,[r8]
 
+
+	pop {r4}
 	 ldr r8,=posX
 	 str r4,[r8]
+	 push {r4}
 
 	 push {r1}
 	 mov r9,r2
 
+	@@guardando el primer pixel
 	pop {r4}
 	mov r7,r4
 	ldr r7,[r7]
 	push {r4}
-
 
 	 recorrerFila:
 	 	@@ya terminamos una fila??
