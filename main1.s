@@ -46,17 +46,12 @@ main:
 		ldr r0, =prueba
 		bl puts
 		
+		/*background*/
 		bl background
 
 		/*Personaje*/
-		mov r0, #10
-		ldr r1,=run1
-		ldr r2,=run1Width
-		ldr r2,[r2]
-		ldr r3,=run1Height
-		ldr r3,[r3]
-		mov r4,#50
-		bl imprimirImagen
+		mov r0,#0
+		bl personaje @lo mantiene en la posicion actual
 
 		/*delay para ver mas tiempo al personaje*/
 		bl wait
@@ -118,13 +113,21 @@ main:
 						b loop
 
 					presionadoRojo:
-					ldr r0, =mensajePresionadoRojo
-					bl puts
+						ldr r0, =mensajePresionadoRojo
+						bl puts
+						mov r0,#1
+						mov r1,#1
+						mov r3,#1
+						bl personaje @Imprime a personaje en la nueva poscision
 					b loop
 
 				presionadoVerde:
-				ldr r0, =mensajePresionadoVerde
-				bl puts
+					ldr r0, =mensajePresionadoVerde
+					bl puts
+					mov r0,#1
+					mov r1,#1
+					mov r3,#0
+					bl personaje @Imprime a personaje en la nueva poscision
 				b loop
 
 			presionadoAzul:
@@ -179,7 +182,122 @@ background:
 		mov r4, #0
 		bl imprimirImagen
 	pop {pc}
+/*Imprimir la imagen con su respectivo movieminto en x o y*/
+@@PARAMETROS
+@@R0= 1(en realidad puede ser otro) / 0... 1 para saber si se movio el personaje durante el ciclo, 0 para dejarlo en la misma posicion
+@@R1= 1(en realidad puede ser otro) / 0... 1 si hubo moviemiento en Y, 0 no hubo movimiento en Y por lo tanto fue en X
+@@R2= 1(en realidad puede ser otro) / 0... Este parametro aplica solo si es que se movio durante el ciclo en X, 1 para la derecha en X, 0 para la izquierda en X
+@@R3= 1(en realidad puede ser otro) / 0... Este parametro aplica solo si es que se movio durante el ciclo en Y, 1 para la Arriba en Y, 0 para abajo en Y 
 
+personaje:
+	push {lr}
+		cmp r0, #0
+		beq noSeMovioLink
+		bne siSeMovioLink
+
+		siSeMovioLink:
+		cmp r1, #0
+		beq fueEnX
+		bne fueEnY
+
+			fueEnX:
+			cmp r2,#0
+			beq izquierda1
+			bne derecha1
+
+				izquierda1:
+					ldr r5,=posYlink
+					ldr r5,[r5] @R5 tiene la pos actuar de link en Y
+					mov r0, r5
+					ldr r1,=run1
+					ldr r2,=run1Width
+					ldr r2,[r2]
+					ldr r3,=run1Height
+					ldr r3,[r3]
+					ldr r6, =posXlink
+					ldr r6,[r6] @R6 tiene la pos actual de link en X
+					sub r6, r6, #20
+					mov r4, r6
+					ldr r7,=posXlink
+					str r6,[r7]
+					bl imprimirImagen
+				b siga
+
+				derecha1:
+					ldr r5,=posYlink
+					ldr r5,[r5] @R5 tiene la pos actuar de link en Y
+					mov r0, r5
+					ldr r1,=run1
+					ldr r2,=run1Width
+					ldr r2,[r2]
+					ldr r3,=run1Height
+					ldr r3,[r3]
+					ldr r6, =posXlink
+					ldr r6,[r6] @R6 tiene la pos actual de link en X
+					add r6, r6, #20
+					mov r4, r6
+					ldr r7,=posXlink
+					str r6,[r7]
+					bl imprimirImagen
+				b siga
+
+			fueEnY:
+			cmp r3, #0
+			beq abajo1
+			bne arriba1
+
+				abajo1:
+					ldr r5,=posYlink
+					ldr r5,[r5] @R5 tiene la pos actuar de link en Y
+					add r5, r5, #20
+					mov r0, r5
+					ldr r7,=posYlink
+					str r5,[r7]
+					ldr r1,=run1
+					ldr r2,=run1Width
+					ldr r2,[r2]
+					ldr r3,=run1Height
+					ldr r3,[r3]
+					ldr r6, =posXlink
+					ldr r6,[r6] @R6 tiene la pos actual de link en X
+					mov r4, r6
+					bl imprimirImagen
+				b siga
+
+				arriba1:
+					ldr r5,=posYlink
+					ldr r5,[r5] @R5 tiene la pos actuar de link en Y
+					sub r5, r5, #20
+					mov r0, r5
+					ldr r7,=posYlink
+					str r5,[r7]
+					ldr r1,=run1
+					ldr r2,=run1Width
+					ldr r2,[r2]
+					ldr r3,=run1Height
+					ldr r3,[r3]
+					ldr r6, =posXlink
+					ldr r6,[r6] @R6 tiene la pos actual de link en X
+					mov r4, r6
+					bl imprimirImagen
+				b siga
+
+		noSeMovioLink:
+			ldr r5,=posYlink
+			ldr r5,[r5] @R5 tiene la pos actuar de link en Y
+			mov r0, r5
+			ldr r1,=run1
+			ldr r2,=run1Width
+			ldr r2,[r2]
+			ldr r3,=run1Height
+			ldr r3,[r3]
+			ldr r6,=posXlink
+			ldr r6,[r6] @R6 tiene la pos actual de link en X
+			mov r4,r6
+			bl imprimirImagen
+		b siga
+	siga:
+	pop {pc}
 .data
 .align 2
 .global pixelAddr
@@ -206,7 +324,7 @@ posX: .word 0
 posY: .word 200
 
 posXlink: .word 0
-posYlink: .word 0
+posYlink: .word 140
 
 tempSizeX: .word 0
 tempSizeY: .word 0
