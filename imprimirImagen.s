@@ -77,7 +77,7 @@ imprimirImagen:
 	 	ldr sizeY,[sizeY]
 	 	sub sizeY,#1
 	 	cmp sizeY,#0
-	 	beq fin
+	 	beq fin1
 
 	 	ldr r0,=tempSizeY
 	 	str sizeY,[r0]
@@ -99,6 +99,6 @@ imprimirImagen:
 	 	str r0,[r1]
 	 	b recorrerFila
 
-	 fin:
+	 fin1:
 	 	pop {r9}
 	 	pop {pc}
