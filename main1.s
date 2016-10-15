@@ -38,6 +38,72 @@ main:
 	mov r1, #0
 	bl SetGpioFunction
 
+	loopMenu:
+		ldr r0, =prueba
+		bl puts
+
+		/*Patalla de menu*/
+		mov r0,#0
+		ldr r1,=startScreenM
+		ldr r2,=startScreenMWidth
+		ldr r2,[r2]
+		ldr r3,=startScreenMHeight
+		ldr r3,[r3]
+		mov r4, #0
+		bl imprimirImagen
+
+		/*Condiciones de botones*/
+		mov r0, #17
+		bl GetGpio
+		mov r4, r0
+		cmp r4, #0
+		bne presionadoStartMenu
+		beq	sinPresionarStartMenu
+
+		sinPresionarStartMenu:
+			@@Leemos boton Rojo (mover derecha)
+			mov r0, #22
+			bl GetGpio
+			mov r4, r0
+			cmp r4, #0
+			bne presionadoRojoMenu
+			beq	sinPresionarRojoMenu
+
+					sinPresionarRojoMenu:
+						b loopMenu
+
+					presionadoRojoMenu:
+						ldr r0, =mensajePresionadoRojo
+						bl puts
+						miniLoop:
+							/*Patalla de Instrucciones*/
+							mov r0,#0
+							ldr r1,=instruccionesScreenM
+							ldr r2,=instruccionesScreenMWidth
+							ldr r2,[r2]
+							ldr r3,=instruccionesScreenMHeight
+							ldr r3,[r3]
+							mov r4, #0
+							bl imprimirImagen
+							@@Leemos boton Azul 
+							mov r0, #18	
+							bl GetGpio
+							mov r4, r0
+							cmp r4, #0
+							bne regresarMenu
+							beq	seguirEnInstrucciones
+							regresarMenu:
+								b loopMenu
+							seguirEnInstrucciones:
+								b miniLoop
+						b miniLoop
+					b loopMenu
+
+		presionadoStartMenu:
+			ldr r0,=mensajePresionadoStart
+			bl puts
+			b loop
+	b loopMenu
 
 	loop:
 		ldr r0,=booleanEndGame
@@ -166,7 +232,35 @@ main:
 	b loop
 
 	endGame:
+		/*Imprimir pantalla de gano*/
+		@@Leemos boton start
+		ldr r0,=booleanEndGame
+		ldr r0, [r0]
+		mov r4,#0
+		ldr r0,=booleanEndGame
+		str r4,[r0]
 
+		verificar:
+		mov r0, #17
+		bl GetGpio
+		mov r4, r0
+		cmp r4, #0
+		bne comenzarOtraVez
+		beq	noEstaPresionado
+		noEstaPresionado:
+			mov r0,#0
+			ldr r1,=youWinScreenM
+			ldr r2,=youWinScreenMWidth
+			ldr r2,[r2]
+			ldr r3,=youWinScreenMHeight
+			ldr r3,[r3]
+			mov r4, #0
+			bl imprimirImagen
+			b verificar
+		comenzarOtraVez:
+			bl wait
+			bl wait
+			b loopMenu
 		mov r7,#1
 		swi 0
 
@@ -505,4 +599,5 @@ topePantallaX: .word 550
 topeGanondorf: .word 400
 caminataGanodorfBoolean: .word 0
 booleanEndGame: .word 0
+
 .end
